@@ -10,13 +10,13 @@ export class AssetCard extends Component {
                     <div className="card-body AssetCard__body">
                         <h5 className="card-title AssetCard__asset_name">{this.props.assetName}</h5>
                         <p className="card-text AssetCard__asset_description">{this.props.assetDescription}</p>
-                        <p className="card-text AssetCard__asset_price__container">
+                        <div className="card-text AssetCard__asset_price__container">
                             <div className="AssetCard__asset_price__label">Price</div>
                             <div className="AssetCard__asset_price__symbol">
                                 {" "}
                                 Ξ <span className="AssetCard__asset_price__value">{this.props.assetPrice}</span>
                             </div>
-                        </p>
+                        </div>
                         {/* <a href={`/asset/${this.props.assetId}`} className="btn btn-outline-primary AssetCard__details_button">
                         View Details
                     </a> */}
