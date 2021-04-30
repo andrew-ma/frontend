@@ -16,15 +16,14 @@ import { ethers } from "ethers";
 // using them with ethers
 import CONTRACT_ARTIFACT from "../contracts/Token.json";
 import CONTRACT_ADDRESS from "../contracts/DeployedAddress.json";
-const CONTRACT_NAME = "Token";
 
-// how often to poll contract data to keep in sync with fronend
+// how often to poll contract data to keep in sync with frontend
 const POLL_DATA_INTERVAL = 2000; // in milliseconds
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-const HARDHAT_NETWORK_ID = "1337";
+const HARDHAT_NETWORK_ID = "31337";
 
 // This is an error code that indicates that the user canceled a transaction
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
@@ -255,7 +254,7 @@ export class Dapp extends React.Component {
 
         // initialize the contract using the provider and the token's artifact
         // CONTRACT_NAME is key in json file, to get the address of the deployed smart contract
-        this._Contract = new ethers.Contract(CONTRACT_ADDRESS[CONTRACT_NAME], CONTRACT_ARTIFACT.abi, this._Web3Provider.getSigner(0));
+        this._Contract = new ethers.Contract(CONTRACT_ADDRESS.DeployedAddress, CONTRACT_ARTIFACT.abi, this._Web3Provider.getSigner(0));
     }
 
     async _updateBalanceState() {
