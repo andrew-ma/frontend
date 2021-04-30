@@ -1,0 +1,228 @@
+/* Dapp */
+.hidden {
+    display: none;
+}
+
+.navbar {
+    margin-bottom: 1rem;
+}
+
+/* NoWalletDetected */
+
+.NoWalletDetected__image {
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    min-width: 300px;
+    width: 20%;
+}
+
+.NoWalletDetected__message {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+}
+
+.NoWalletDetected__link {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 1.5rem;
+}
+
+/* ConnectWallet */
+.ConnectWallet__button {
+    font-weight: 700;
+    letter-spacing: 0.2ch;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 5px 2px rgb(194, 165, 0);
+}
+.ConnectWallet__button:hover,
+.ConnectWallet__button:focus,
+.ConnectWallet__button:active {
+    color: white;
+}
+.ConnectWallet__button-icon {
+    width: 4rem;
+    margin-right: 1rem;
+}
+
+/* Assets */
+
+/* Asset Card Grid */
+.assets__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding: 1rem;
+}
+
+@media screen and (min-width: 600px) {
+    .assets__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 978px) {
+    .assets__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media screen and (min-width: 1440px) {
+    .assets__grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* AssetDetails */
+.AssetDetails__container {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+}
+
+.AssetDetails__container a {
+    margin-left: 0.3rem;
+}
+
+/* AssetDetails Main Side */
+.AssetDetails__main {
+    min-width: 50%;
+    margin-left: 1rem;
+}
+
+.AssetDetails__header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.AssetDetails__asset_name {
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+.AssetDetails__asset_owner {
+    font-size: 1rem;
+    color: gray;
+    display: flex;
+    align-items: center;
+}
+.AssetDetails__asset_owner__image {
+    border-radius: 50%;
+    width: 1.8rem;
+    margin-right: 0.3rem;
+}
+
+.AssetDetails__price_card {
+}
+
+.AssetDetails__pricevalue {
+    margin-bottom: 1rem;
+}
+
+.AssetDetails__pricevalue--coin {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.AssetDetails__buybutton {
+    padding-right: 5rem;
+    padding-left: 5rem;
+}
+
+/* AssetDetails Summary Side */
+.AssetDetails__summary {
+    flex-grow: 1;
+}
+
+.AssetDetails__image_card {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: none;
+    margin-bottom: 1rem;
+}
+
+.AssetDetails__details_card {
+    margin-bottom: 1rem;
+}
+.AssetDetails__details_card-body {
+    display: flex;
+    color: gray;
+    align-items: center;
+}
+
+.AssetDetails__details__image {
+    border-radius: 50%;
+    width: 1.8rem;
+    margin-right: 0.3rem;
+}
+
+.AssetDetails__about_card {
+    margin-bottom: 1rem;
+}
+
+.AssetDetails__chaininfo_card {
+}
+
+/* Asset Card */
+.AssetCard {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.5s;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    box-shadow: 1px 3px 1px rgba(197, 198, 204, 0.4);
+}
+
+.AssetCard:hover {
+    box-shadow: 0 3px 10px rgba(56, 76, 165, 0.4);
+}
+
+.AssetCard a {
+    text-decoration: none;
+    color: initial;
+}
+.AssetCard__body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.AssetCard__asset_name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.2ch;
+}
+
+.AssetCard__asset_price__symbol {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+.AssetCard__asset_price__label {
+    text-shadow: 2px 2px 3px rgba(119, 119, 119, 0.3);
+    color: gray;
+    text-align: right;
+    font-size: 0.8rem;
+}
+
+/* Navbar */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+#logo {
+    width: 3rem;
+    margin-right: 1rem;
+}
+
+.company-name {
+    font-weight: 600;
+    font-size: 1.7rem;
+}
+
+.nav-item {
+    font-size: 1.4rem;
+}
