@@ -15,7 +15,7 @@ import { ethers } from "ethers";
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
 import CONTRACT_ARTIFACT from "../contracts/Token.json";
-import CONTRACT_ADDRESS from "../contracts/contract-address.json";
+import CONTRACT_ADDRESS from "../contracts/DeployedAddress.json";
 const CONTRACT_NAME = "Token";
 
 // how often to poll contract data to keep in sync with fronend
