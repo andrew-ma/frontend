@@ -27,7 +27,7 @@ export class AssetDetails extends Component {
             <div className="AssetDetails__container">
                 <div className="AssetDetails__summary">
                     <div className="card asset__card AssetDetails__image_card">
-                        <img className="card-img-top AssetDetails__image" src={this.state.imageSrc} />
+                        <img className="card-img-top AssetDetails__image" src={this.state.imageSrc} alt="" />
                     </div>
                     <div className="AssetDetails__details_card card">
                         <div className="AssetDetails__details_card-header card-header">Details</div>
@@ -35,6 +35,7 @@ export class AssetDetails extends Component {
                             <img
                                 className="AssetDetails__details__image"
                                 src="https://lh3.googleusercontent.com/IKXt5JuFhcfceDlzCKHvZVdB6TLCbmGxiA6WmNbohRmez7Y92CeDLMXQjSApLA7cnj15WwCckgjhnQbWTSceKZB0VRwhcQvfyrlWY9Q=s44"
+                                alt=""
                             />
                             Created by <Link to={`/accounts/${this.state.assetCreator}`}>{this.state.assetCreator}</Link>
                         </div>
@@ -73,6 +74,7 @@ export class AssetDetails extends Component {
                                 <img
                                     className="AssetDetails__asset_owner__image"
                                     src="https://lh3.googleusercontent.com/IKXt5JuFhcfceDlzCKHvZVdB6TLCbmGxiA6WmNbohRmez7Y92CeDLMXQjSApLA7cnj15WwCckgjhnQbWTSceKZB0VRwhcQvfyrlWY9Q=s44"
+                                    alt=""
                                 />
                                 Owned by{" "}
                                 <span className="AssetDetails__asset_owner__link">
