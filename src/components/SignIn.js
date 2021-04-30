@@ -21,6 +21,15 @@ export class SignIn extends React.Component {
         // So, if it hasn't been saved yet, we have
         // to show the ConnectWallet component.
         //
-        return <ConnectWallet onClickConnectButton={this.props.onClickConnectButton} />;
+        return (
+            <ConnectWallet
+                onClickConnectButton={() => {
+                    if (this.props.onClickConnectButton()) {
+                        // Go to page once logged in successfully
+                        this.props.history.replace("/browse");
+                    }
+                }}
+            />
+        );
     }
 }
