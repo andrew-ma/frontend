@@ -15,9 +15,6 @@ export class CreateAsset extends React.Component {
             assetDescriptionValue: "",
             previewImageURL: null,
         };
-
-        // bind methods to this
-        this._createNewToken = this._createNewToken.bind(this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -49,71 +46,25 @@ export class CreateAsset extends React.Component {
         this.setState({ assetDescriptionValue: event.target.value });
     };
 
-    _createNewToken = async () => {
-        try {
-            if (!this.state.uploadFileValue) {
-                throw new Error("Need to add a valid file");
-            }
-
-            if (!this.state.assetNameValue) {
-                throw new Error("Needs a valid Asset Name");
-            }
-
-            if (!this.state.assetPriceValue) {
-                this.props.setAlert("Invalid Asset Price (must be greater than 0)", "danger");
-                throw new Error("Needs a valid Asset Price");
-            }
-        } catch (error) {
-            console.error(error);
-            this.props.setAlert(error.message, "danger");
-            return null;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        // First, Create a new token on the Deployed Contract and get back the new token id
-        let newTokenId = null;
-
-        try {
-            newTokenId = await this.props.contract.createNewToken();
-            console.log("New token ID", newTokenId);
-        } catch (error) {
-            if (error.code === -32603) {
-                // Nonce too high, show message to Reset Metamask account
-                this.props.setAlert(
-                    "Nonce is too high.\nTo fix, click on MetaMask extension\nClick on Account Picture\nClick Settings\nClick Advanced\nClick Reset Account Button",
-                    "danger"
-                );
-            } else {
-                console.log(error);
-                this.props.setAlert(error.message, "danger");
-            }
-        }
-
-        console.log("After contract.createNewToken:", newTokenId);
-        if (newTokenId === null) {
-            // Don't Post to database if Contract failed to createNewToken
-            return null;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-
+    writeToDatabase = async (tokenId, assetName, assetDescription, fileObj, assetPrice, tokenOwner) => {
         // Second, make a POST request to save metadata to backend with that newTokenId
         // upload the file to server first
         const formData = new FormData();
-        formData.append("imageFile", this.state.uploadFileValue, this.state.uploadFileValue.name);
-        formData.append("assetName", this.state.assetNameValue);
-        formData.append("assetDescription", this.state.assetDescriptionValue);
-        formData.append("tokenId", newTokenId);
+        formData.append("imageFile", fileObj, fileObj.name);
+        formData.append("assetName", assetName);
+        formData.append("assetDescription", assetDescription);
+        formData.append("tokenId", tokenId);
+        formData.append("assetPrice", assetPrice);
+        formData.append("tokenOwner", tokenOwner);
 
         // Wait for post request promise to resolve
         try {
-            const response = await axios.post("http://127.0.0.1:4000/token", formData);
-            this.props.setAlert(`Successfully created Token ${response.data.tokenId}`, "success");
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/token`, formData);
+            this.props.setAlert(`Saved values to database for Token ${response.data.tokenId}`, "success");
         } catch (error) {
             if (isNetworkError(error)) {
                 // if Network error
-                this.props.setAlert("Can't connect to backend: http://127.0.0.1:4000/token", "danger");
+                this.props.setAlert(`Can't connect to backend: ${process.env.REACT_APP_BACKEND_URL}/token`, "danger");
             } else {
                 // otherwise Axios error is error.response.data
                 console.error(error.response.data);
@@ -122,16 +73,40 @@ export class CreateAsset extends React.Component {
         }
     };
 
-    handleSubmitForm = (e) => {
-        e.preventDefault();
-        console.log(`
-        Name: ${this.state.assetNameValue}, ${typeof this.state.assetNameValue}
-        Price: ${this.state.assetPriceValue}, ${typeof this.state.assetPriceValue}
-        Description: ${this.state.assetDescriptionValue}, ${typeof this.state.assetDescriptionValue}
-        File: ${this.state.uploadFileValue}, ${typeof this.state.uploadFileValue}
-        `);
+    getNewestTokenIdAndOwnerFromContract = async () => {
+        const tx = await this.props.Contract.createNewToken();
+        const receipt = await tx.wait();
+        // console.log("receipt", receipt);
+        const TransferEvents = receipt.events.filter((e) => e.event === "Transfer");
 
-        this._createNewToken();
+        // const { blockHash, cumulativeGasUsed, from: TokenOwner, to: ContractAddress, transactionHash } = receipt;
+
+        // console.log(`Block Hash: ${blockHash}`);
+        // console.log(`Contract Address: ${ContractAddress}`);
+        // console.log(`Transaction Hash: ${transactionHash}`);
+        // console.log(`Used ${cumulativeGasUsed.toNumber()} gas`);
+        // console.log(`TokenOwner: ${TokenOwner}, ${TransferEvents[0].args.to}`);
+        // console.log(`TokenId: ${TransferEvents[0].args.tokenId.toNumber()}`);
+
+        const { from: tokenOwner } = receipt;
+        const tokenId = TransferEvents[0].args.tokenId.toNumber();
+        return [tokenId, tokenOwner];
+    };
+
+    handleSubmitForm = async (e) => {
+        e.preventDefault();
+
+        const [tokenId, tokenOwner] = await this.getNewestTokenIdAndOwnerFromContract();
+        console.log(`Token ID: ${tokenId}\nToken Owner: ${tokenOwner}`);
+
+        await this.writeToDatabase(
+            tokenId,
+            this.state.assetNameValue,
+            this.state.assetDescriptionValue,
+            this.state.uploadFileValue,
+            this.state.assetPriceValue,
+            tokenOwner
+        );
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -142,7 +117,7 @@ export class CreateAsset extends React.Component {
         // clear Alert
         this.props.setAlert(undefined);
 
-        if (!this.props.contract) {
+        if (this.props.Contract === undefined) {
             // go to sign-in page
             this.props.history.push("/sign-in");
         }
@@ -183,12 +158,12 @@ export class CreateAsset extends React.Component {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="assetprice__input">Asset Price (ether) *</label>
+                        <label htmlFor="assetprice__input">Asset Price (gwei) *</label>
                         <input
                             required
                             type="number"
                             min="0"
-                            step="0.01"
+                            step="1"
                             className="form-control"
                             id="assetprice__input"
                             value={this.state.assetPriceValue}

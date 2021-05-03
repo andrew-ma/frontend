@@ -8,6 +8,7 @@ import { NoWalletDetected } from "./NoWalletDetected";
 import { CreateAsset } from "./CreateAsset";
 import { Assets } from "./Assets";
 import { AssetDetails } from "./AssetDetails";
+import { AccountDetails } from "./AccountDetails";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
@@ -258,18 +259,32 @@ export class Dapp extends React.Component {
                         <Route
                             path="/sign-in"
                             exact
-                            render={(props) => <SignIn {...props} onClickConnectButton={this._connectWallet}></SignIn>}></Route>
-                        <Route path="/install" exact component={NoWalletDetected}></Route>
+                            render={(props) => (
+                                <SignIn {...props} onClickConnectButton={this._connectWallet} setAlert={this._setAlert}></SignIn>
+                            )}></Route>
+                        <Route
+                            path="/install"
+                            exact
+                            render={(props) => <NoWalletDetected {...props} setAlert={this._setAlert}></NoWalletDetected>}></Route>
                         <Route
                             path="/create"
                             exact
                             render={(props) => (
-                                <CreateAsset {...props} contract={this.state.Contract} setAlert={this._setAlert}></CreateAsset>
+                                <CreateAsset
+                                    {...props}
+                                    selectedAddress={this.state.selectedAddress}
+                                    Provider={this._Web3Provider}
+                                    Contract={this.state.Contract}
+                                    setAlert={this._setAlert}></CreateAsset>
                             )}></Route>
-                        <Route path="/account" exact component={NotFound}></Route>
-                        <Route path="/accounts/:id" exact component={NotFound}></Route>
-                        <Route path="/browse" exact render={(props) => <Assets {...props}></Assets>}></Route>
-                        <Route path="/asset/:id" exact render={(props) => <AssetDetails {...props}></AssetDetails>}></Route>
+                        <Route
+                            path="/accounts/:id"
+                            exact
+                            render={(props) => <AccountDetails {...props} setAlert={this._setAlert}></AccountDetails>}></Route>
+                        <Route path="/browse" exact render={(props) => <Assets {...props} setAlert={this._setAlert}></Assets>}></Route>
+                        <Route path="/asset/:id" exact render={(props) => <AssetDetails {...props} setAlert={this._setAlert}></AssetDetails>}></Route>
+                        <Route path="/not-found" exact render={(props) => <NotFound {...props} setAlert={this._setAlert}></NotFound>}></Route>
+
                         <Redirect from="/" exact to="/browse"></Redirect>
                     </Switch>
                 </div>

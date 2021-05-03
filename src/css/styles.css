@@ -232,3 +232,12 @@
     width: 30%;
     max-width: 30%;
 }
+
+/* AssetDetails */
+.AssetDetails__token_id {
+    display: flex;
+}
+
+.token_id__label {
+    margin-right: 1rem;
+}
