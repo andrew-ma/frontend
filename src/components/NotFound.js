@@ -1,6 +1,5 @@
 import React from "react";
-export class NotFound extends React.Component {
-    render() {
-        return <h1>Not Found {this.props.location.pathname}</h1>;
-    }
+
+export function NotFound(props) {
+    return <h1>Not Found {props.location.pathname}</h1>;
 }

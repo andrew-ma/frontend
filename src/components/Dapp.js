@@ -44,10 +44,10 @@ export class Dapp extends React.Component {
         super(props);
         this.initialState = {
             selectedAddress: undefined,
-            balance: undefined,
             alertText: undefined,
             alertClass: undefined,
             tokenData: undefined,
+            Contract: undefined,
         };
 
         // initialize this.state object
@@ -56,55 +56,12 @@ export class Dapp extends React.Component {
         // Class variables
         //  set in _initializeEthers()
         this._Web3Provider = undefined;
-        this._Contract = undefined;
 
         // Saved poll interval to clear later
         this._PollDataInterval = undefined;
     }
 
-    render() {
-        // show Navbar and MainBody on every page
-        return (
-            <React.Fragment>
-                <Route render={(props) => <Navbar {...props} isLoggedIn={!!this.state.selectedAddress}></Navbar>}></Route>
-
-                <div className="container-xl MainBody">
-                    <div className={"MainBody__alert " + this._getAlertClasses()} role="alert">
-                        {this.state.alertText}
-                    </div>
-
-                    <Switch>
-                        <Route
-                            path="/sign-in"
-                            exact
-                            render={(props) => <SignIn {...props} onClickConnectButton={() => this._connectWallet()}></SignIn>}></Route>
-                        <Route path="/install" exact component={NoWalletDetected}></Route>
-                        <Route path="/create" exact render={(props) => <CreateAsset {...props} setAlert={this._setAlert}></CreateAsset>}></Route>
-                        <Route path="/account" exact component={NotFound}></Route>
-                        <Route path="/accounts/:id" exact component={NotFound}></Route>
-                        <Route path="/browse" exact render={(props) => <Assets {...props}></Assets>}></Route>
-                        <Route path="/asset/:id" exact render={(props) => <AssetDetails {...props}></AssetDetails>}></Route>
-                        {/* <Route path="/" exact component={NotFound}></Route> */}
-                        <Redirect from="/" exact to="/browse"></Redirect>
-                    </Switch>
-                </div>
-            </React.Fragment>
-        );
-    }
-
-    componentWillUnmount() {
-        this._stopPollingData();
-    }
-
     /////////////////////////////////////////////////////////////////////////////
-    // State variables setters
-    _setSelectedAddress = (selectedAddress) => {
-        this.setState({ selectedAddress: selectedAddress });
-    };
-
-    _setBalance = (balance) => {
-        this.setState({ balance: balance });
-    };
 
     /////////////////////////////////////////////////////////////////////////////
     // Alert Messages on main page
@@ -142,7 +99,7 @@ export class Dapp extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
 
-    async _connectWallet() {
+    _connectWallet = async () => {
         // run when user clicks the connect button
         // it connects to the user's wallet and initializes it
 
@@ -190,7 +147,7 @@ export class Dapp extends React.Component {
         });
 
         return true;
-    }
+    };
 
     /////////////////////////////////////////////////////////////////////////////
 
@@ -210,8 +167,6 @@ export class Dapp extends React.Component {
 
     _initialize = (newAddress) => {
         console.log("Initializing with wallet address", newAddress);
-        this._setAlert(`Initializing with wallet address: ${newAddress}`, "success");
-        // initialize the dapp with newAddress
 
         // store newAddress in the state
         this.setState({ selectedAddress: newAddress });
@@ -219,13 +174,16 @@ export class Dapp extends React.Component {
         // initialize ethers, fetch the token's data, and start polling for user's balance
 
         this._initializeWeb3ProviderAndContract();
-        this._updateTokenDataState();
+        // this._updateTokenDataState();
         this._startPollingData();
     };
 
     _resetState = () => {
         // reset the this.state object
         this.setState(this.initialState);
+
+        // reset the contract object
+        this.setState({ Contract: undefined });
     };
 
     /////////////////////////////////////////////////////////////////////////////
@@ -234,11 +192,11 @@ export class Dapp extends React.Component {
         // We are polling data from contract, to make sure that the frontend state and blockchain step are synced
         // we are saving this interval, so we can stop it to prevent memory leaks
         this._PollDataInterval = setInterval(() => {
-            this._updateBalanceState();
+            // this._updateBalanceState();
         }, POLL_DATA_INTERVAL);
 
         // run it once immediately after calling this function
-        this._updateBalanceState();
+        // this._updateBalanceState();
     };
 
     _stopPollingData = () => {
@@ -249,7 +207,7 @@ export class Dapp extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
 
-    async _initializeWeb3ProviderAndContract() {
+    _initializeWeb3ProviderAndContract = async () => {
         // Initialized Web3Provider and Contract are saved in class variables
 
         // first initialize ethers by creating a provider using window.ethereum
@@ -258,23 +216,68 @@ export class Dapp extends React.Component {
         // initialize the contract using the provider and the token's artifact
         // CONTRACT_NAME is key in json file, to get the address of the deployed smart contract
         const signer = this._Web3Provider.getSigner(0);
-        this._Contract = new ethers.Contract(CONTRACT_ADDRESS.DeployedAddress, CONTRACT_ARTIFACT.abi, signer);
+        this.setState({ Contract: new ethers.Contract(CONTRACT_ADDRESS.DeployedAddress, CONTRACT_ARTIFACT.abi, signer) });
+    };
+
+    //  _updateBalanceState=async() =>{
+    //     //query the deployed smart contract's balanceOf a specific address
+    //     const balance = await this.state.Contract.balanceOf(this.state.selectedAddress);
+    //     console.log("Updated balance", balance);
+    //     this.setState({ balance: balance });
+    // }
+
+    // async _updateTokenDataState=async() =>{
+    //     // Querying the contract for its name and symbol, and saving in state
+    //     const name = await this.state.Contract.name();
+    //     const symbol = await this.state.Contract.symbol();
+    //     console.log(`Updated Token Data: Name=${name} Symbol=${symbol}`);
+    //     this.setState({ tokenData: { name: name, symbol: symbol } });
+    // }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    render() {
+        // show Navbar and MainBody on every page
+        return (
+            <React.Fragment>
+                <Route
+                    render={(props) => (
+                        <Navbar {...props} selectedAddress={this.state.selectedAddress} resetState={this._resetState}></Navbar>
+                    )}></Route>
+
+                <div className="container-xl MainBody">
+                    <div className={"MainBody__alert " + this._getAlertClasses()} role="alert">
+                        {this.state.alertText}
+                    </div>
+
+                    <Switch>
+                        <Route
+                            path="/sign-in"
+                            exact
+                            render={(props) => <SignIn {...props} onClickConnectButton={this._connectWallet}></SignIn>}></Route>
+                        <Route path="/install" exact component={NoWalletDetected}></Route>
+                        <Route
+                            path="/create"
+                            exact
+                            render={(props) => (
+                                <CreateAsset {...props} contract={this.state.Contract} setAlert={this._setAlert}></CreateAsset>
+                            )}></Route>
+                        <Route path="/account" exact component={NotFound}></Route>
+                        <Route path="/accounts/:id" exact component={NotFound}></Route>
+                        <Route path="/browse" exact render={(props) => <Assets {...props}></Assets>}></Route>
+                        <Route path="/asset/:id" exact render={(props) => <AssetDetails {...props}></AssetDetails>}></Route>
+                        <Redirect from="/" exact to="/browse"></Redirect>
+                    </Switch>
+                </div>
+            </React.Fragment>
+        );
     }
 
-    async _updateBalanceState() {
-        //query the deployed smart contract's balanceOf a specific address
-        const balance = await this._Contract.balanceOf(this.state.selectedAddress);
-        console.log("Updated balance", balance);
-        this.setState({ balance: balance });
+    componentWillUnmount() {
+        this._stopPollingData();
     }
-
-    async _updateTokenDataState() {
-        // Querying the contract for its name and symbol, and saving in state
-        const name = await this._Contract.name();
-        const symbol = await this._Contract.symbol();
-        console.log(`Updated Token Data: Name=${name} Symbol=${symbol}`);
-        this.setState({ tokenData: { name: name, symbol: symbol } });
-    }
-
-    /////////////////////////////////////////////////////////////////////////////
 }

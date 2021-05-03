@@ -24,10 +24,9 @@ export class SignIn extends React.Component {
         return (
             <ConnectWallet
                 onClickConnectButton={() => {
-                    if (this.props.onClickConnectButton()) {
-                        // Go to page once logged in successfully
-                        this.props.history.replace("/browse");
-                    }
+                    this.props.onClickConnectButton();
+                    // go to last page
+                    this.props.history.replace("/");
                 }}
             />
         );

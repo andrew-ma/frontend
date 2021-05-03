@@ -3,9 +3,35 @@ import { NavLink, Link } from "react-router-dom";
 import logo from "../images/logo.svg";
 
 export class Navbar extends React.Component {
-    render() {
-        const { isLoggedIn } = this.props;
+    _buttonsIfLoggedOut = () => {
+        // Show Sign in buttons, if we are logged out
+        return (
+            <Link className="btn btn-outline-success my-2 my-sm-0" to="/sign-in">
+                Sign In
+            </Link>
+        );
+    };
 
+    _buttonsIfLoggedIn = () => {
+        // Show Sign out buttons, if we are logged in
+        return (
+            <button
+                className="btn btn-outline-secondary my-2 my-sm-0"
+                onClick={() => {
+                    this.props.resetState();
+                    // go to sign in page
+                    this.props.history.push("/sign-in");
+                }}>
+                Sign Out {this.props.selectedAddress}
+            </button>
+        );
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    render() {
         return (
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <NavLink className="navbar-brand" to="/">
@@ -41,22 +67,9 @@ export class Navbar extends React.Component {
                             </NavLink>
                         </li>
                     </ul>
-                    {isLoggedIn ? this._buttonsIfLoggedIn() : this._buttonsIfLoggedOut()}
+                    {!!this.props.selectedAddress ? this._buttonsIfLoggedIn() : this._buttonsIfLoggedOut()}
                 </div>
             </nav>
         );
     }
-
-    _buttonsIfLoggedOut = () => {
-        // Show Sign in buttons, if we are logged out
-        return (
-            <Link className="btn btn-outline-success my-2 my-sm-0" to="/sign-in">
-                Sign In
-            </Link>
-        );
-    };
-    _buttonsIfLoggedIn = () => {
-        // Show Sign out buttons, if we are logged in
-        return <button className="btn btn-outline-secondary my-2 my-sm-0">Sign Out</button>;
-    };
 }
