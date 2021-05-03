@@ -16,14 +16,13 @@ export class AssetDetails extends Component {
         super(props);
 
         this.state = {
-            imageSrc:
-                "https://lh3.googleusercontent.com/TFXs8L0v3Rj4cf9J6FCL1ZrhvgDmtJwPDl9gNpIR9uGb7VEPHyh1-eVK5vAC7c50NFZoCCqDjb4ofcyzMS1mGK7Nlk8eZ8aN0y9YII8=s271",
-            assetName: "COolio",
-            assetOwner: "JoeBiden",
-            description: "foxnes",
-            price: 10,
-            tokenId: "0xlkjlkjklj",
-            assetCreator: "Bob the builder",
+            imageSrc: "",
+            assetName: "",
+            assetOwner: "",
+            description: "",
+            price: 0,
+            tokenId: "",
+            assetCreator: "",
         };
     }
 
@@ -141,7 +140,7 @@ export class AssetDetails extends Component {
                         <div className="AssetDetails__price_card-body card-body">
                             <div className="AssetDetails__pricevalue">
                                 <div className="AssetDetails__pricevalue--coin">
-                                    Ξ <span className="coinvalue">0.01</span>
+                                    Ξ <span className="coinvalue">{this.state.price}</span>
                                 </div>
                                 {/* <div className="pricevalue--dollar">
                                 ($<span className="dollarvalue"></span>)
