@@ -4,7 +4,7 @@ import { isNetworkError } from "../helpers/isNetworkError";
 
 import AssetCard from "./AssetCard";
 
-export class Assets extends Component {
+export class AccountDetails extends Component {
     constructor(props) {
         super(props);
 
@@ -13,15 +13,15 @@ export class Assets extends Component {
         };
     }
 
-    getTokenMetadataStartToEndFromDatabase = async (startTokenId, endTokenId) => {
+    getTokenMetadataByOwnerFromDatabase = async (tokenOwner) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/tokens/?start=${startTokenId}&end=${endTokenId}`);
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/tokens/?owner=${tokenOwner}`);
             console.log(response.data);
             return response.data;
         } catch (error) {
             if (isNetworkError(error)) {
                 // if Network error
-                this.props.setAlert(`Can't connect to backend: ${process.env.REACT_APP_BACKEND_URL}/tokens/`, "danger");
+                this.props.setAlert(`Can't connect to backend: ${process.env.REACT_APP_BACKEND_URL}/token`, "danger");
             } else {
                 // otherwise Axios error is error.response.data
                 // console.error(error.response.data);
@@ -31,34 +31,11 @@ export class Assets extends Component {
         }
     };
 
-    getAllTokenMetadata = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/tokens/`);
-            console.log(response.data);
-            return response.data;
-        } catch (error) {
-            if (isNetworkError(error)) {
-                // if Network error
-                this.props.setAlert(`Can't connect to backend: ${process.env.REACT_APP_BACKEND_URL}/tokens/`, "danger");
-            } else {
-                // otherwise Axios error is error.response.data
-                // console.error(error.response.data);
-                // this.props.setAlert(error.response.data, "danger");
-            }
-            return null;
-        }
-    };
-
-    updateTokenMetadataArray = async (startTokenId, endTokenId) => {
+    updateTokenMetadataArray = async (tokenOwner) => {
         // Query the database for all assets
-        const tokenMetadataArray = await this.getAllTokenMetadata();
 
-        //// Query range of tokens
-        // const tokenMetadataArray = await this.getTokenMetadataStartToEndFromDatabase(startTokenId, endTokenId);
-
-        if (tokenMetadataArray !== null) {
-            this.setState({ tokenMetadataArray: tokenMetadataArray });
-        }
+        const tokenMetadataArray = await this.getTokenMetadataByOwnerFromDatabase(tokenOwner);
+        this.setState({ tokenMetadataArray: tokenMetadataArray });
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -68,14 +45,14 @@ export class Assets extends Component {
     componentDidMount() {
         // clear previous alert
         this.props.setAlert(undefined);
-
-        this.updateTokenMetadataArray();
+        const tokenOwner = this.props.match.params.id;
+        this.updateTokenMetadataArray(tokenOwner);
     }
 
     render() {
         return (
             <div>
-                <h1>All Assets</h1>
+                <h1>My Assets</h1>
                 <div className="assets__grid">
                     {this.state.tokenMetadataArray.map((assetObj) => {
                         const { name, tokenOwner, description, price, tokenId, image } = assetObj;
@@ -96,4 +73,4 @@ export class Assets extends Component {
     }
 }
 
-export default Assets;
+export default AccountDetails;

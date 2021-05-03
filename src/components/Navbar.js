@@ -56,11 +56,11 @@ export class Navbar extends React.Component {
                                 Browse
                             </NavLink>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink className="nav-link" to="/account">
                                 My Assets
                             </NavLink>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/create">
                                 Create
