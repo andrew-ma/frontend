@@ -74,23 +74,28 @@ export class CreateAsset extends React.Component {
     };
 
     getNewestTokenIdAndOwnerFromContract = async () => {
-        const tx = await this.props.Contract.createNewToken();
-        const receipt = await tx.wait();
-        // console.log("receipt", receipt);
-        const TransferEvents = receipt.events.filter((e) => e.event === "Transfer");
+        try {
+            const tx = await this.props.Contract.createNewToken();
+            const receipt = await tx.wait();
+            // console.log("receipt", receipt);
+            const TransferEvents = receipt.events.filter((e) => e.event === "Transfer");
 
-        // const { blockHash, cumulativeGasUsed, from: TokenOwner, to: ContractAddress, transactionHash } = receipt;
+            // const { blockHash, cumulativeGasUsed, from: TokenOwner, to: ContractAddress, transactionHash } = receipt;
 
-        // console.log(`Block Hash: ${blockHash}`);
-        // console.log(`Contract Address: ${ContractAddress}`);
-        // console.log(`Transaction Hash: ${transactionHash}`);
-        // console.log(`Used ${cumulativeGasUsed.toNumber()} gas`);
-        // console.log(`TokenOwner: ${TokenOwner}, ${TransferEvents[0].args.to}`);
-        // console.log(`TokenId: ${TransferEvents[0].args.tokenId.toNumber()}`);
+            // console.log(`Block Hash: ${blockHash}`);
+            // console.log(`Contract Address: ${ContractAddress}`);
+            // console.log(`Transaction Hash: ${transactionHash}`);
+            // console.log(`Used ${cumulativeGasUsed.toNumber()} gas`);
+            // console.log(`TokenOwner: ${TokenOwner}, ${TransferEvents[0].args.to}`);
+            // console.log(`TokenId: ${TransferEvents[0].args.tokenId.toNumber()}`);
 
-        const { from: tokenOwner } = receipt;
-        const tokenId = TransferEvents[0].args.tokenId.toNumber();
-        return [tokenId, tokenOwner];
+            const { from: tokenOwner } = receipt;
+            const tokenId = TransferEvents[0].args.tokenId.toNumber();
+            return [tokenId, tokenOwner];
+        } catch (error) {
+            this.props.setAlert(error.message, "danger");
+            console.error(error.message);
+        }
     };
 
     handleSubmitForm = async (e) => {

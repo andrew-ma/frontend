@@ -13,6 +13,4 @@ COPY . .
 
 EXPOSE 3000
 
-RUN npm run build
-
-CMD npx serve -s build -l 3000
+CMD npm run build && npx serve -s build -l 3000
