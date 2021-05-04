@@ -95,23 +95,35 @@ export class CreateAsset extends React.Component {
         } catch (error) {
             this.props.setAlert(error.message, "danger");
             console.error(error.message);
+            throw error;
         }
     };
 
     handleSubmitForm = async (e) => {
         e.preventDefault();
 
-        const [tokenId, tokenOwner] = await this.getNewestTokenIdAndOwnerFromContract();
-        console.log(`Token ID: ${tokenId}\nToken Owner: ${tokenOwner}`);
+        try {
+            const tokenIdAndOwnerArr = await this.getNewestTokenIdAndOwnerFromContract();
+            if (tokenIdAndOwnerArr === null) {
+                throw new Error("Failed to createNewToken");
+            }
 
-        await this.writeToDatabase(
-            tokenId,
-            this.state.assetNameValue,
-            this.state.assetDescriptionValue,
-            this.state.uploadFileValue,
-            this.state.assetPriceValue,
-            tokenOwner
-        );
+            const [tokenId, tokenOwner] = tokenIdAndOwnerArr;
+
+            console.log(`Token ID: ${tokenId}\nToken Owner: ${tokenOwner}`);
+
+            await this.writeToDatabase(
+                tokenId,
+                this.state.assetNameValue,
+                this.state.assetDescriptionValue,
+                this.state.uploadFileValue,
+                this.state.assetPriceValue,
+                tokenOwner
+            );
+        } catch (error) {
+            this.props.setAlert(error.message, "danger");
+            console.error(error.message);
+        }
     };
 
     ////////////////////////////////////////////////////////////////////////////
